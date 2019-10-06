@@ -2,13 +2,20 @@
   "name": "knext",
   "version": "0.0.1",
   "description": "A query builder library, like Knex but extremely fast",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "test": "ava",
     "lint": "eslint src test",
     "build": "cross-env BABEL_ENV=production babel src -d lib"
   },
-  "author": "Jesús Villanueva",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jesusvilla/knext.git"
+  },
+  "author": {
+    "name": "Jesús Villanueva",
+    "email": "jrvr1993@gmail.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.6.2",
