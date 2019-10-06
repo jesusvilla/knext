@@ -1,0 +1,40 @@
+{
+  "name": "knext",
+  "version": "0.0.1",
+  "description": "A query builder library, like Knex but extremely fast",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava",
+    "lint": "eslint src test",
+    "build": "cross-env BABEL_ENV=production babel src -d lib"
+  },
+  "author": "Jesús Villanueva",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/node": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "ava": "^2.4.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.5.1",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "pg": "^7.12.1",
+    "pg-query-stream": "^2.0.0"
+  },
+  "dependencies": {},
+  "keywords": [
+    "sql",
+    "query",
+    "postgresql"
+  ],
+  "ava": {
+    "files": [
+      "test/index.js"
+    ]
+  }
+}
