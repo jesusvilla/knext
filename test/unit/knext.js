@@ -10,8 +10,8 @@ test('Select', t => {
   t.is(sql.toString(), res)
 })
 
-test('Result', async t => {
+/* test('Result', async t => {
   const knext = Knext(config.postgres)
   const res = await knext('song').select('title').where('id', '<=', 2).orWhereNull('title')
   t.deepEqual(res, [{ title: 'Primero' }, { title: 'Segundo' }])
-})
+}) */
