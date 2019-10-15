@@ -1,9 +1,10 @@
-const Query = require('./query')
+import Query from './query'
 
 async function execute () {
   const client = await this.pool.connect()
   try {
-    const res = await client.query(this.toString(), this.params)
+    const query = this.toSQL()
+    const res = await client.query(query.sql, query.bindings)
     return res.rows
   } finally {
     await client.release()
@@ -20,11 +21,15 @@ async function execute () {
     })
 } */
 
-class Interface extends Query {
+export default class Interface extends Query {
   constructor (pool, table) {
     super(table)
     this.pool = pool
   }
+
+  /* #execute () {
+
+  } */
 
   then (resolve, reject) {
     return execute.call(this).then(resolve, reject)
@@ -34,5 +39,3 @@ class Interface extends Query {
     return execute.call(this).catch(reject)
   }
 }
-
-module.exports = Interface

@@ -1,12 +1,49 @@
-const test = require('ava')
-const Knext = require('../../src/index')
-const config = require('../config')
+import test from 'ava'
+import Knext from '../../src/index'
+import { config } from '../config'
 
-test('Select', t => {
-  // DOCS: http://michaelavila.com/knex-querylab/
+// DOCS: http://michaelavila.com/knex-querylab/
+
+test('SELECT: TABLE', t => {
   const knext = Knext(config.postgres)
-  const sql = knext('song').select('title').where('id', '<=', 2).orWhereNull('title')
-  const res = 'SELECT "title" FROM "song" WHERE "id" <= $1 OR "title" IS NULL'
+  const sql = knext('song')
+  const res = 'SELECT * FROM "song"'
+  t.is(sql.toString(), res)
+})
+
+test('SELECT: TABLE WITH ALIAS', t => {
+  const knext = Knext(config.postgres)
+  const sql = knext('song as s')
+  const res = 'SELECT * FROM "song" AS "s"'
+  t.is(sql.toString(), res)
+})
+
+test('SELECT: COLUMNS (STRING)', async t => {
+  const knext = Knext(config.postgres)
+  const sql = knext('song as s').select('id', 'title')
+  const res = 'SELECT "id", "title" FROM "song" AS "s"'
+  t.is(sql.toString(), res)
+})
+
+test('SELECT: COLUMNS (ARRAY)', async t => {
+  // fixed: 0.0.5
+  const knext = Knext(config.postgres)
+  const sql = knext('song as s').select(['id', 'title'])
+  const res = 'SELECT "id", "title" FROM "song" AS "s"'
+  t.is(sql.toString(), res)
+})
+
+test('SELECT: COLUMNS (OBJECT)', async t => {
+  const knext = Knext(config.postgres)
+  const sql = knext('song as s').select({ i: 'id', t: 'title' })
+  const res = 'SELECT "id" AS "i", "title" AS "t" FROM "song" AS "s"'
+  t.is(sql.toString(), res)
+})
+
+test('SELECT: COLUMNS (ANY)', async t => {
+  const knext = Knext(config.postgres)
+  const sql = knext('song as s').select({ i: 'id' }, ['author'], 'title')
+  const res = 'SELECT "id" AS "i", "author", "title" FROM "song" AS "s"'
   t.is(sql.toString(), res)
 })
 

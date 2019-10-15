@@ -1,10 +1,10 @@
-const forEach = require('./utils/foreach')
+const forEach = require('@utils/foreach')
 
 function escapeField (field) {
   return '"' + field.replace(/"/g, '""') + '"'
 }
 
-class Query {
+export default class Query {
   constructor (table) {
     this.table = table
     this.fields = []
@@ -37,15 +37,18 @@ class Query {
   select () {
     const escapeFieldAux = this.constructor.escapeField
     forEach(arguments, field => {
+      if (field === null || field === void 0) {
+        return void 0
+      }
       if (typeof field === 'string') {
         this.fields.push(escapeFieldAux(field))
-      } else if (field && typeof field === 'object') {
-        forEach(field, (f, as) => {
-          this.fields.push(escapeFieldAux(`${f} AS ${as}`))
-        })
-      } else if (field && Array.isArray(field)) {
+      } else if (Array.isArray(field)) {
         forEach(field, f => {
           this.fields.push(escapeFieldAux(f))
+        })
+      } else if (typeof field === 'object') {
+        forEach(field, (f, as) => {
+          this.fields.push(escapeFieldAux(`${f} AS ${as}`))
         })
       }
     })
@@ -209,7 +212,7 @@ class Query {
   }
 
   toSelect () {
-    const fields = this.fields.length ? this.fields.join(',') : '*'
+    const fields = this.fields.length ? this.fields.join(', ') : '*'
 
     let str = `SELECT ${fields} FROM ${this.constructor.escapeField(this.table)}`
     if (this.joinFields.length) {
@@ -256,14 +259,33 @@ class Query {
     // ...
   }
 
-  toString () {
+  toSQL () {
     if (this.type === 'INSERT') {
-      return this.toInsert()
+      return {
+        sql: this.toInsert(),
+        bindings: this.params
+      }
     } else if (this.type === 'SELECT') {
-      return this.toSelect()
+      return {
+        sql: this.toSelect(),
+        bindings: this.params
+      }
     } else if (this.type === 'DELETE') {
-      return this.toDelete()
+      return {
+        sql: this.toDelete(),
+        bindings: this.params
+      }
     }
   }
+
+  toQuery () {
+    const query = this.toSQL()
+    return query.sql.replace(/\$[0-9]+/g, (n, index) => {
+      return query.bindings[index]
+    })
+  }
+
+  toString () {
+    return this.toQuery()
+  }
 }
-module.exports = Query

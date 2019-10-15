@@ -1,6 +1,6 @@
-const Interface = require('./interface')
+import Interface from './interface'
 
-function Knex (config) {
+export default function Knex (config) {
   const { Pool } = require('pg')
   const pool = new Pool(config.connection)
 
@@ -8,4 +8,3 @@ function Knex (config) {
     return new Interface(pool, table)
   }
 }
-module.exports = Knex

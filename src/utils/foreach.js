@@ -21,7 +21,7 @@ function forEachObject (object, cb) {
  * @param {iterableCallback} cb - The callback of each iteration
  */
 module.exports = function forEach (element, cb) {
-  if (element == null) {
+  if (element === null || element === void 0) {
     return void 0
   }
   if (element.length !== void 0) {

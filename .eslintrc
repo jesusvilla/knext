@@ -1,0 +1,16 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "standard"
+  ],
+  "plugins": [],
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "eol-last": ["error", "never"],
+    "one-var": 0,
+    "no-void": 0,
+    "no-undefined": ["error"]
+  }
+}
