@@ -7,7 +7,7 @@
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
     ["@babel/plugin-proposal-class-properties", { "loose" : true }],
     ["@babel/plugin-proposal-private-methods", { "loose": true}],
-    ["@babel/plugin-transform-runtime", { "regenerator": true }],
+    // ["@babel/plugin-transform-runtime", { "regenerator": true }],
     ["module-resolver", {
         //"root": ["./src/"],
         "alias": {

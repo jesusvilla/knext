@@ -20,7 +20,7 @@ function forEachObject (object, cb) {
  * @param {(*[]|Object|string)} element
  * @param {iterableCallback} cb - The callback of each iteration
  */
-module.exports = function forEach (element, cb) {
+export default function forEach (element, cb) {
   if (element === null || element === void 0) {
     return void 0
   }

@@ -1,4 +1,4 @@
-const forEach = require('@utils/foreach')
+import forEach from '@utils/foreach'
 
 function escapeField (field) {
   return '"' + field.replace(/"/g, '""') + '"'

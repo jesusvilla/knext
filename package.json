@@ -1,14 +1,14 @@
 {
   "name": "knext",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A query builder library, like Knex but extremely fast",
   "main": "./lib/index.js",
   "scripts": {
-    "clean": "rimraf lib",
+    "clean": "rimraf lib/*",
     "test": "ava",
     "lint": "eslint src test",
     "lint:fix": "eslint --fix src test",
-    "build": "cross-env BABEL_ENV=production babel src -d lib",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir lib --copy-files",
     "prepublish": "npm run clean && npm run lint && npm run test && npm run build"
   },
   "repository": {
@@ -30,6 +30,7 @@
     "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "@babel/register": "^7.6.2",
+    "@babel/runtime": "^7.6.3",
     "ava": "^2.4.0",
     "babel-eslint": "^10.0.3",
     "babel-plugin-module-resolver": "^3.2.0",
@@ -44,9 +45,7 @@
     "pg-query-stream": "^2.0.0",
     "rimraf": "^3.0.0"
   },
-  "dependencies": {
-    "@babel/runtime": "^7.6.3"
-  },
+  "dependencies": {},
   "keywords": [
     "sql",
     "query",
