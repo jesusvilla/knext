@@ -47,8 +47,28 @@ test('SELECT: COLUMNS (ANY)', async t => {
   t.is(sql.toString(), res)
 })
 
-/* test('Result', async t => {
-  const knext = Knext(config.postgres)
-  const res = await knext('song').select('title').where('id', '<=', 2).orWhereNull('title')
-  t.deepEqual(res, [{ title: 'Primero' }, { title: 'Segundo' }])
-}) */
+if (process.env.LOCAL) {
+  test('Result', async t => {
+    const knext = Knext(config.postgres)
+    const res = await knext('song').select('title').where('id', '<=', 2).orWhereNull('title')
+
+    t.deepEqual(res, [{ title: 'Primero' }, { title: 'Segundo' }])
+  })
+
+  test('Stream', async t => {
+    const knext = Knext(config.postgres)
+    const stream = knext('song').select('title').where('id', '<=', 2).orWhereNull('title').stream()
+
+    // stream.pipe(process.stdout)
+    stream.on('data', chunk => {
+      console.log('test:chunk', chunk)
+    })
+
+    await new Promise((resolve) => {
+      stream.on('end', () => {
+        resolve()
+      })
+    })
+    t.is(true, true)
+  })
+}

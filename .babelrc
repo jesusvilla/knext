@@ -11,7 +11,9 @@
     ["module-resolver", {
         //"root": ["./src/"],
         "alias": {
-          "@utils": "./src/utils"
+          "@src": "./src",
+          "@utils": "./src/utils",
+          "@dialects": "./src/dialects"
         }
     }]
   ]
