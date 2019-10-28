@@ -1,6 +1,6 @@
 {
   "name": "knext",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A query builder library, like Knex but extremely fast",
   "main": "./lib/index.js",
   "scripts": {

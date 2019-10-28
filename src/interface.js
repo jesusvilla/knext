@@ -1,11 +1,4 @@
-import Query from './query'
-
-export default class Interface extends Query {
-  constructor (pool, table) {
-    super(table)
-    this.pool = pool
-  }
-
+export default class Interface {
   async connect () {
     /**
      * Connect to database

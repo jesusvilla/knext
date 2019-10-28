@@ -1,6 +1,6 @@
 import Interface from '@src/interface'
 
-export default class InterfaceSql extends Interface {
+export default class InterfaceDB extends Interface {
   async connect () {
     return new Promise((resolve, reject) => {
       this.pool.get((err, db) => {

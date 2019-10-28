@@ -1,4 +1,5 @@
 import forEach from '@utils/foreach'
+import * as valid from '@utils/valid'
 
 function escapeField (field) {
   return '"' + field.replace(/"/g, '""') + '"'
@@ -13,9 +14,11 @@ export default class Query {
     this.whereFields = []
     this.joinFields = []
     this.params = []
+    // this._limit
+    // this._offset
   }
 
-  static escapeField (field) {
+  escapeField (field) {
     if (field === '*') return field
     const matchedField = field.match(/([a-z0-9]+) as ([a-z0-9]+)/i)
     if (matchedField) {
@@ -35,7 +38,7 @@ export default class Query {
   }
 
   select () {
-    const escapeFieldAux = this.constructor.escapeField
+    const escapeFieldAux = this.escapeField
     forEach(arguments, field => {
       if (field === null || field === void 0) {
         return void 0
@@ -55,12 +58,12 @@ export default class Query {
     return this
   }
 
-  allWhere (type, args) {
+  _allWhere (type, args) {
     if (args.length === 1 && typeof args[0] === 'function') {
       const newWhere = new Query()
       newWhere.params = this.params
       args[0].call(newWhere)
-      this.whereFields.push([type, `(${newWhere.whereString()})`])
+      this.whereFields.push([type, `(${newWhere._whereString()})`])
     } else {
       const field = args[0]
       let operator, value
@@ -74,24 +77,24 @@ export default class Query {
 
       if (operator) {
         this.params.push(value)
-        this.whereFields.push([type, `${this.constructor.escapeField(field)} ${operator} $${this.params.length}`])
+        this.whereFields.push([type, `${this.escapeField(field)} ${operator} $${this.params.length}`])
       }
     }
   }
 
   andWhere () {
-    this.allWhere('AND', arguments)
+    this._allWhere('AND', arguments)
     return this
   }
 
   orWhere () {
-    this.allWhere('OR', arguments)
+    this._allWhere('OR', arguments)
     return this
   }
 
   whereIn () {
     // TODO: Validate
-    this.allWhere('AND', [arguments[0], 'IN', arguments[1]])
+    this._allWhere('AND', [arguments[0], 'IN', arguments[1]])
   }
 
   where () {
@@ -99,12 +102,12 @@ export default class Query {
   }
 
   whereNull (field) {
-    this.whereFields.push(['AND', `${this.constructor.escapeField(field)} IS NULL`])
+    this.whereFields.push(['AND', `${this.escapeField(field)} IS NULL`])
     return this
   }
 
   orWhereNull (field) {
-    this.whereFields.push(['OR', `${this.constructor.escapeField(field)} IS NULL`])
+    this.whereFields.push(['OR', `${this.escapeField(field)} IS NULL`])
     return this
   }
 
@@ -113,7 +116,7 @@ export default class Query {
     return this
   }
 
-  whereString () {
+  _whereString () {
     // Internal
     let str = ''
     if (this.whereFields.length) {
@@ -128,42 +131,42 @@ export default class Query {
     return str
   }
 
-  internalJoin (type, table, field1, field2) {
-    this.joinFields.push(`${type} JOIN ${this.constructor.escapeField(table)} ON ${this.constructor.escapeField(field1)} = ${this.constructor.escapeField(field2)}`)
+  _internalJoin (type, table, field1, field2) {
+    this.joinFields.push(`${type} JOIN ${this.escapeField(table)} ON ${this.escapeField(field1)} = ${this.escapeField(field2)}`)
   }
 
   innerJoin (table, field1, field2) {
-    this.internalJoin('INNER', table, field1, field2)
+    this._internalJoin('INNER', table, field1, field2)
     return this
   }
 
   leftJoin (table, field1, field2) {
-    this.internalJoin('LEFT', table, field1, field2)
+    this._internalJoin('LEFT', table, field1, field2)
     return this
   }
 
   leftOuterJoin (table, field1, field2) {
-    this.internalJoin('LEFT OUTER', table, field1, field2)
+    this._internalJoin('LEFT OUTER', table, field1, field2)
     return this
   }
 
   rightJoin (table, field1, field2) {
-    this.internalJoin('RIGHT', table, field1, field2)
+    this._internalJoin('RIGHT', table, field1, field2)
     return this
   }
 
   rightOuterJoin (table, field1, field2) {
-    this.internalJoin('RIGHT OUTER', table, field1, field2)
+    this._internalJoin('RIGHT OUTER', table, field1, field2)
     return this
   }
 
   fullOuterJoin (table, field1, field2) {
-    this.internalJoin('FULL OUTER', table, field1, field2)
+    this._internalJoin('FULL OUTER', table, field1, field2)
     return this
   }
 
   crossJoin (table, field1, field2) {
-    this.internalJoin('CROSS', table, field1, field2)
+    this._internalJoin('CROSS', table, field1, field2)
     return this
   }
 
@@ -175,6 +178,37 @@ export default class Query {
   clearSelect () {
     this.fields = []
     return this
+  }
+
+  limit (num) {
+    if (valid.isNumber(num)) {
+      this._limit = +num
+    }
+    return this
+  }
+
+  offset (num) {
+    if (valid.isNumber(num)) {
+      this._offset = +num
+    }
+    return this
+  }
+
+  _limitString () {
+    let query = ''
+    if (this._limit !== void 0) {
+      query = `LIMIT ${this._limit}`
+    }
+    if (this._offset !== void 0) {
+      if (query !== '') {
+        query += ' '
+      }
+      query += `OFFSET ${this._offset}`
+    }
+    return {
+      query,
+      position: 'after' // 'before', 'after'
+    }
   }
 
   insert (obj) {
@@ -211,37 +245,49 @@ export default class Query {
     return this
   }
 
-  toSelect () {
-    const fields = this.fields.length ? this.fields.join(', ') : '*'
+  _toSelect () {
+    const fields = this.fields.length > 0 ? this.fields.join(', ') : '*'
+    const limitString = this._limitString()
+    const whereString = this._whereString()
 
-    let str = `SELECT ${fields} FROM ${this.constructor.escapeField(this.table)}`
+    let str = 'SELECT '
+
+    if (limitString.query !== '' && limitString.position === 'before') {
+      str += `${limitString.query} `
+    }
+
+    str += `${fields} FROM ${this.escapeField(this.table)}`
+
     if (this.joinFields.length) {
       str += ' ' + this.joinFields.join(' ')
     }
-    const whereString = this.whereString()
-    if (whereString) {
+
+    if (whereString !== '') {
       str += ' WHERE ' + whereString
     }
 
+    if (limitString.query !== '' && limitString.position === 'after') {
+      str += ` ${limitString.query}`
+    }
     return str
   }
 
-  toInsert () {
-    const escapeFieldAux = this.constructor.escapeField
+  _toInsert () {
+    const escapeFieldAux = this.escapeField
     let str = `INSERT INTO ${escapeFieldAux(this.table)}`
-    if (this.fields.length) {
+    if (this.fields.length > 0) {
       str += ` (${this.fields.map(v => escapeFieldAux(v)).join(', ')})`
     }
-    if (this.values.length) {
+    if (this.values.length > 0) {
       str += ' VALUES '
       str += this.values.map(v => `(${v.join(', ')})`).join(', ')
     }
     return str
   }
 
-  toDelete () {
-    let str = `DELETE FROM ${this.constructor.escapeField(this.table)}`
-    if (this.whereFields.length) {
+  _toDelete () {
+    let str = `DELETE FROM ${this.escapeField(this.table)}`
+    if (this.whereFields.length > 0) {
       str += ' WHERE '
       forEach(this.whereFields, ([type, where], i) => {
         if (i === 0) {
@@ -262,17 +308,17 @@ export default class Query {
   toSQL () {
     if (this.type === 'INSERT') {
       return {
-        sql: this.toInsert(),
+        sql: this._toInsert(),
         bindings: this.params
       }
     } else if (this.type === 'SELECT') {
       return {
-        sql: this.toSelect(),
+        sql: this._toSelect(),
         bindings: this.params
       }
     } else if (this.type === 'DELETE') {
       return {
-        sql: this.toDelete(),
+        sql: this._toDelete(),
         bindings: this.params
       }
     }
@@ -280,7 +326,7 @@ export default class Query {
 
   toQuery () {
     const query = this.toSQL()
-    return query.sql.replace(/\$[0-9]+/g, (n, index) => {
+    return query.sql.replace(/\$\d+/g, (n, index) => {
       return query.bindings[index]
     })
   }
