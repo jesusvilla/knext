@@ -58,6 +58,13 @@ export default class Query {
     return this
   }
 
+  _getSymbolParam (pos) {
+    if (pos === void 0) {
+      pos = this.params.length
+    }
+    return '$' + pos
+  }
+
   _allWhere (type, args) {
     if (args.length === 1 && typeof args[0] === 'function') {
       const newWhere = new Query()
@@ -77,7 +84,7 @@ export default class Query {
 
       if (operator) {
         this.params.push(value)
-        this.whereFields.push([type, `${this.escapeField(field)} ${operator} $${this.params.length}`])
+        this.whereFields.push([type, `${this.escapeField(field)} ${operator} ${this._getSymbolParam()}`])
       }
     }
   }
@@ -233,7 +240,7 @@ export default class Query {
       const row = []
       forEach(this.fields, field => {
         this.params.push(item[field])
-        row.push('$' + (index * this.fields.length + row.length + 1))
+        row.push(this._getSymbolParam(index * this.fields.length + row.length + 1))
       })
       this.values.push(row)
     })

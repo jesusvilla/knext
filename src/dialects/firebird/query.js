@@ -17,4 +17,21 @@ export default class QueryDB extends Query {
       position: 'before' // 'before', 'after'
     }
   }
+
+  /* escapeField (arg) {
+    return arg
+  } */
+
+  _getSymbolParam () {
+    return '?'
+  }
+
+  toQuery () {
+    const query = this.toSQL()
+    let index = -1
+    return query.sql.replace(/\?+/g, (char) => {
+      index++
+      return query.bindings[index]
+    })
+  }
 }

@@ -1,16 +1,10 @@
 export default class Interface {
   async connect () {
-    /**
-     * Connect to database
-     * @return Promise
-     */
+    // Connect to database
   }
 
   async execute () {
-    /**
-     * Execute query
-     * @return Promise
-     */
+    // Execute query
   }
 
   then (resolve, reject) {

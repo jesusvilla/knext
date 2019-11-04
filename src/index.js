@@ -8,7 +8,7 @@ module.exports = function Knex (config) {
   const InterfaceCore = require(`${BASE_IMPORT}/interface`).default
   const QueryCore = require(`${BASE_IMPORT}/query`).default
 
-  class Interface extends mixin(InterfaceCore, QueryCore) {
+  class Interface extends mixin(QueryCore, InterfaceCore) {
     constructor (pool, table) {
       super(table)
       this.pool = pool
