@@ -9,38 +9,38 @@ const knext = Knext(config[dialect])
 
 test('SELECT: TABLE', t => {
   const sql = knext('song')
-  const res = 'SELECT * FROM "song"'
+  const res = 'SELECT * FROM song'
   t.is(sql.toString(), res)
 })
 
 test('SELECT: TABLE WITH ALIAS', t => {
   const sql = knext('song as s')
-  const res = 'SELECT * FROM "song" AS "s"'
+  const res = 'SELECT * FROM song as s'
   t.is(sql.toString(), res)
 })
 
 test('SELECT: COLUMNS (STRING)', async t => {
   const sql = knext('song as s').select('id', 'title')
-  const res = 'SELECT "id", "title" FROM "song" AS "s"'
+  const res = 'SELECT id, title FROM song as s'
   t.is(sql.toString(), res)
 })
 
 test('SELECT: COLUMNS (ARRAY)', async t => {
   // fixed: 0.0.5
   const sql = knext('song as s').select(['id', 'title'])
-  const res = 'SELECT "id", "title" FROM "song" AS "s"'
+  const res = 'SELECT id, title FROM song as s'
   t.is(sql.toString(), res)
 })
 
 test('SELECT: COLUMNS (OBJECT)', async t => {
   const sql = knext('song as s').select({ i: 'id', t: 'title' })
-  const res = 'SELECT "id" AS "i", "title" AS "t" FROM "song" AS "s"'
+  const res = 'SELECT id AS i, title AS t FROM song as s'
   t.is(sql.toString(), res)
 })
 
 test('SELECT: COLUMNS (ANY)', async t => {
   const sql = knext('song as s').select({ i: 'id' }, ['author'], 'title')
-  const res = 'SELECT "id" AS "i", "author", "title" FROM "song" AS "s"'
+  const res = 'SELECT id AS i, author, title FROM song as s'
   t.is(sql.toString(), res)
 })
 

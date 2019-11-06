@@ -1,9 +1,9 @@
 import forEach from '@utils/foreach'
 import * as valid from '@utils/valid'
 
-function escapeField (field) {
+/* function escapeField (field) {
   return '"' + field.replace(/"/g, '""') + '"'
-}
+} */
 
 export default class Query {
   constructor (table) {
@@ -19,7 +19,8 @@ export default class Query {
   }
 
   escapeField (field) {
-    if (field === '*') return field
+    return field
+    /* if (field === '*') return field
     const matchedField = field.match(/([a-z0-9]+) as ([a-z0-9]+)/i)
     if (matchedField) {
       return `${escapeField(matchedField[1])} AS ${escapeField(matchedField[2])}`
@@ -29,7 +30,7 @@ export default class Query {
         return `${escapeField(matchedFieldPoint[1])}.${escapeField(matchedFieldPoint[2])}`
       }
     }
-    return escapeField(field)
+    return escapeField(field) */
   }
 
   from (table) {

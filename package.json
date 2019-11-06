@@ -1,6 +1,6 @@
 {
   "name": "knext",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A query builder library, like Knex but extremely fast",
   "main": "./lib/index.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "url": "git+https://github.com/jesusvilla/knext.git"
   },
   "author": {
-    "name": "Jesús Villanueva",
+    "name": "Jesús Villanueva Ramos",
     "email": "jrvr1993@gmail.com"
   },
   "license": "MIT",
