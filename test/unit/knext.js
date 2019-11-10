@@ -2,7 +2,7 @@ import test from 'ava'
 import Knext from '../../src/index'
 import { config } from '../config'
 
-const dialect = process.env.DIALECT || 'postgres'
+const dialect = process.env.DIALECT || 'firebird'
 const knext = Knext(config[dialect])
 
 // DOCS: http://michaelavila.com/knex-querylab/

@@ -1,10 +1,7 @@
-export default class Interface {
-  async connect () {
-    // Connect to database
-  }
-
-  async execute () {
-    // Execute query
+export default Interface => class extends Interface {
+  constructor (pool, table) {
+    super(table)
+    this.pool = pool
   }
 
   then (resolve, reject) {

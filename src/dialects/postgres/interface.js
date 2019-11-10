@@ -1,6 +1,4 @@
-import Interface from '@src/interface'
-
-export default class InterfaceDB extends Interface {
+export default Interface => class extends Interface {
   async connect () {
     return this.pool.connect()
   }

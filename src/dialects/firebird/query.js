@@ -1,6 +1,4 @@
-import Query from '@src/query'
-
-export default class QueryDB extends Query {
+export default Query => class extends Query {
   _limitString () {
     let query = ''
     if (this._limit !== void 0) {
@@ -18,9 +16,9 @@ export default class QueryDB extends Query {
     }
   }
 
-  /* escapeField (arg) {
+  escapeField (arg) {
     return arg
-  } */
+  }
 
   _getSymbolParam () {
     return '?'

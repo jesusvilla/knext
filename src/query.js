@@ -1,10 +1,6 @@
 import forEach from '@utils/foreach'
 import * as valid from '@utils/valid'
 
-/* function escapeField (field) {
-  return '"' + field.replace(/"/g, '""') + '"'
-} */
-
 export default class Query {
   constructor (table) {
     this.table = table
@@ -18,19 +14,24 @@ export default class Query {
     // this._offset
   }
 
+  _escapeField (field) {
+    return `"${field.replace(/"/g, '""')}"`
+  }
+
   escapeField (field) {
-    return field
-    /* if (field === '*') return field
-    const matchedField = field.match(/([a-z0-9]+) as ([a-z0-9]+)/i)
-    if (matchedField) {
-      return `${escapeField(matchedField[1])} AS ${escapeField(matchedField[2])}`
-    } else {
-      const matchedFieldPoint = field.match(/([a-z0-9]+)\.([a-z0-9]+)/i)
-      if (matchedFieldPoint) {
-        return `${escapeField(matchedFieldPoint[1])}.${escapeField(matchedFieldPoint[2])}`
+    if (field === '*') return field
+
+    const matchedField = field.replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '').split(/ as /i)
+    if (matchedField.length > 0) {
+      const res = matchedField[0].split('.').reduce((a, b) => {
+        return a + this._escapeField(b)
+      }, '')
+      if (matchedField.length > 1) {
+        return `${res} AS ${this._escapeField(matchedField[1])}`
       }
+      return res
     }
-    return escapeField(field) */
+    return ''
   }
 
   from (table) {
@@ -39,20 +40,19 @@ export default class Query {
   }
 
   select () {
-    const escapeFieldAux = this.escapeField
     forEach(arguments, field => {
       if (field === null || field === void 0) {
         return void 0
       }
       if (typeof field === 'string') {
-        this.fields.push(escapeFieldAux(field))
+        this.fields.push(this.escapeField(field))
       } else if (Array.isArray(field)) {
         forEach(field, f => {
-          this.fields.push(escapeFieldAux(f))
+          this.fields.push(this.escapeField(f))
         })
       } else if (typeof field === 'object') {
         forEach(field, (f, as) => {
-          this.fields.push(escapeFieldAux(`${f} AS ${as}`))
+          this.fields.push(this.escapeField(`${f} AS ${as}`))
         })
       }
     })
@@ -281,10 +281,9 @@ export default class Query {
   }
 
   _toInsert () {
-    const escapeFieldAux = this.escapeField
-    let str = `INSERT INTO ${escapeFieldAux(this.table)}`
+    let str = `INSERT INTO ${this.escapeField(this.table)}`
     if (this.fields.length > 0) {
-      str += ` (${this.fields.map(v => escapeFieldAux(v)).join(', ')})`
+      str += ` (${this.fields.map(v => this.escapeField(v)).join(', ')})`
     }
     if (this.values.length > 0) {
       str += ' VALUES '

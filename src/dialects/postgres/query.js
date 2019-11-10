@@ -1,2 +1,1 @@
-import Query from '@src/query'
-export default Query
+export default Query => Query
