@@ -1,6 +1,6 @@
 {
   "name": "knext",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "description": "A query builder library, like Knex but extremely fast",
   "main": "./lib/index.js",
   "scripts": {
@@ -46,7 +46,9 @@
     "pg-query-stream": "^2.0.0",
     "rimraf": "^3.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tarn": "^2.0.0"
+  },
   "keywords": [
     "sql",
     "query",

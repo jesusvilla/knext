@@ -4,6 +4,11 @@ export default Interface => class extends Interface {
     this.pool = pool
   }
 
+  async connect () {
+    const acquire = this.pool.acquire()
+    return acquire.promise
+  }
+
   then (resolve, reject) {
     return this.execute().then(resolve, reject)
   }

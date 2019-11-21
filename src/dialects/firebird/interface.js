@@ -1,22 +1,15 @@
 export default Interface => class extends Interface {
-  async connect () {
-    return new Promise((resolve, reject) => {
-      this.pool.get((err, db) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(db)
-        }
-      })
-    })
-  }
-
   async execute () {
     const query = this.toSQL()
     const db = await this.connect()
     return new Promise((resolve, reject) => {
       db.query(query.sql, query.bindings, (err, result) => {
-        db.detach()
+        const didRelease = this.pool.release(db)
+        if (!didRelease) {
+          console.log('pool refused connection')
+        }
+        // db.detach();
+
         if (err) {
           reject(err)
         } else {

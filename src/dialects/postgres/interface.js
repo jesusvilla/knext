@@ -1,8 +1,4 @@
 export default Interface => class extends Interface {
-  async connect () {
-    return this.pool.connect()
-  }
-
   async execute () {
     const client = await this.connect()
     try {
@@ -10,7 +6,7 @@ export default Interface => class extends Interface {
       const res = await client.query(query.sql, query.bindings)
       return res.rows
     } finally {
-      await client.release()
+      await this.pool.release(client)
     }
   }
 
